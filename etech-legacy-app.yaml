@@ -1,0 +1,35 @@
+kind: Deployment
+metadata:
+  name: etechapp-deployment
+  namespace: prometheus
+  labels:
+    app: etechwebapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: etechwebapp
+  template:
+    metadata:
+      labels:
+        app: etechwebapp
+    spec:
+      containers:
+      - name: etechwebapp
+        image: etechteam2/legacyapp:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etechwebapp-service
+  namespace: prometheus
+spec:
+  type: LoadBalancer
+  selector:
+    app: etechwebapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
