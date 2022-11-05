@@ -1,0 +1,161 @@
+Prometheus-monitoring:
+Setup monitoring on EKS Cluster using Prometheus and Grafana:
+
+  What is Prometheus?
+● Prometheus is an open source monitoring tool and alerting tool.
+  SoundCloud initially developed the tool, and due to adoption by several organizations after 2012, it has fostered a very 
+  active developer and user community. Later in 2016, it joined the Cloud Native Computing Foundation as a second-hosted project after Kubernetes. 
+  Currently, it is independent and not owned by any company. 
+● It Provides out-of-the-box monitoring capabilities for the Kubernetes container
+  orchestration platform. It can monitor servers and databases as well.
+● It Collects and stores metrics as time-series data, recording information with a
+  timestamp
+● It is based on pull and collects metrics from targets by scraping metrics HTTP
+  endpoints.
+  What is Grafana?:
+● Grafana is an open source visualization and analytics software.
+● It allows you to query, visualize, alert on, and explore your metrics no matter
+  where they are stored
+
+some of the main features of Prometheus:
+
+Multi-dimensional data model with time series data and metrics in the form of key-value pairs.
+PromQL, a flexible query language for multidimensional data.
+Autonomous single server nodes.
+Accessing your metrics via HTTP endpoint and showing them in a browser.
+Exceptional support and libraries for metrics of different stacks.
+Multiple nodes for graphing and dashboarding support.
+A pull-based metric system that helps in scraping metrics remotely also.
+Discovering targets via service discovery or static configuration.
+
+Components in Prometheus Architecture:
+Prometheus has several components which help in the overall monitoring of your application. These components of the architecture are:
+Prometheus Server
+Push Gateway
+Alert Manager
+Prometheus Targets
+Client Libraries
+Prometheus Exporters
+Service Discovery
+Key Takeaways
+
+NOTE:
+First, Prometheus scrapes data using the Prometheus server and finds targets using the Service discovery. After that, the scraped data is sent to the dashboard and processed using PromQL and sends alerts to the alert manager, who will send notifications to the user.
+
+Prometheus Server:
+The server is the brain of any web or mobile application. Prometheus server does the same for Prometheus services or clusters. It collects multi-dimensional data in time series and then analyzes and aggregates the collected data. The process of collecting metrics is called scraping. 
+
+Prometheus Gateway
+The Prometheus server alone would not scrape all kinds of metrics; some require extra mechanics. Prometheus Gateway is the intermediary source used for metrics from those jobs which can not be scraped by usual methods
+
+Alertmanager:
+Alertmanager is responsible for managing the alerts sent by the clients. It checks for supplication, groups the signals, and routes them to the correct application like email, Pagerduty, Opsgenie, etc. It also checks for when it should keep alerts off and when not. 
+
+Prometheus Targets:
+Prometheus targets represent how Prometheus extracts metrics from a different resource. In many cases, the metrics are exposed by the services themselves, such as Kubernetes. In this case, Prometheus collects metrics directly. But in some instances, like in unexposed services, Prometheus has to use exporters. Exporters are some programs that extract data from a service and then convert them into Prometheus formats. Here are some examples of the exports below:
+
+Hardware: Node/system
+HTTP: HAProxy, NGINX, Apache.
+APIs: Github, Docker Hub.
+Other monitoring systems: Cloudwatch.
+Databases: MySQL, Elasticsearch.
+Messaging systems: RabbitMQ, Kafka.
+Miscellaneous: Blackbox, JMX.
+
+Client Libraries:
+As we all know, Prometheus collects data in time-series formats that are multi-dimensional. So clients are always asked to send in this form specifically. But in most cases, metrics rules are not automatically written; instead, you need to add them manually.
+
+Prometheus Exporters:
+As mentioned above, in most cases, metrics are self-exposed by the service. In such cases, Prometheus automatically collects metrics. In other cases, Prometheus needs to scrape metrics. Exporters are third-party tools that help scrape metrics when it is not feasible to extract metrics directly. Some exporters are official, while others are not officially declared in the Prometheus Github organization.
+
+Service Discovery:
+In the Prometheus Targets section, we discussed using static-config files to configure the dependencies manually. This process is ok when you have simple uses with the config file, but what if you have to do this in a large amount? Especially when some instances are added or removed every single minute?
+This is where service discovery comes into play. Service discovery helps in providing Prometheus the information of what to escape in whichever database you want. Prometheus’ common service discovery resources are Consul, Amazon’s EC2, and Kubernetes out of the box. 
+
+
+
+Installation Method:
+Prerequisite:
+Install Helm  
+DEPLOY AN EKS CLUSTER USING TERRAFORM, link to github with eks code --> https://github.com/etechDevops/Terraform-EKS
+Run the below commands to configure prometheus and grafana monitoring
+
+$kubectl get nodes (If you have an error run the below commands)
+
+$curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+$chmod +x ./kubectl
+$sudo mv ./kubectl /usr/local/bin/kubectl
+$sudo kubectl version
+Make sure your nodes and all k8s components are up and running before you run the below commands
+---
+
+
+Download helm installation scripts:
+$curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+provide permission
+$sudo chmod 700 get_helm.sh
+Execute script to install
+$sudo ./get_helm.sh 
+$helm version --client(to get helm version)
+---
+
+Create a namespace to deploy your prometheus stack
+$kubectl create ns prometheus
+$kubectl get ns
+$kubectl config set-context --current --namespace=prometheus
+$helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+$helm repo update
+$helm install prometheus prometheus-community/kube-prometheus-stack
+
+
+$kubectl get servicemonitor
+$kubectl get svc 
+#locate prometheus-grafana and prometheus-kube-prometheus-prometheus
+$kubectl edit svc prometheus-grafana
+(change service type from ClusterIP to LoadBalancer)
+
+$kubectl edit svc prometheus-kube-prometheus-prometheus
+(change service type from ClusterIP to LoadBalancer)
+
+$kubectl get svc 
+Get the LoadBalancer and access grafana on port 80 
+Access prometheus on port 9090
+---
+
+How to Create a Kubernetes Monitoring Dashboard?
+For creating a dashboard to monitor the cluster:
+Click the '+' button on the left panel and select ‘Import’.
+Enter 12740 dashboard id under Grafana.com Dashboard.
+Click ‘Load’.
+Select ‘Prometheus’ as the endpoint under prometheus data sources drop down.
+Click ‘Import’.
+---
+
+How to create other dashboards:
+
+How to Create Kubernetes Cluster Monitoring Dashboard?
+For creating a dashboard to monitor the cluster:
+Click the '+' button on the left panel and select ‘Import’.
+Enter 3119 dashboard id under Grafana.com Dashboard.
+Click ‘Load’.
+Select ‘Prometheus’ as the endpoint under prometheus data sources drop down.
+Click ‘Import’.
+This will show monitoring dashboard for all cluster nodes
+---
+
+Create POD Monitoring Dashboard
+For creating a dashboard to monitor the cluster:
+Click the '+' button on the left panel and select ‘Import’.
+Enter 6417 dashboard id under Grafana.com Dashboard.
+Click ‘Load’.
+Select ‘Prometheus’ as the endpoint under prometheus data sources drop down.
+Click ‘Import’
+---
+
+============
+You can also deploy nginx in that namespace.
+$kubectl create ns prometheus
+$kubectl get ns
+$kubectl run nginx --image=nginx --namespace=prometheus
+Also deploy etechapp this is the yaml --> https://github.com/etechDevops/etech-legacy-appv1
