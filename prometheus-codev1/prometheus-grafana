@@ -103,22 +103,27 @@ Create a namespace to deploy your prometheus stack
 $kubectl create ns prometheus
 $kubectl get ns
 $kubectl config set-context --current --namespace=prometheus
+
+install Prometheus-operator
+add repos
 $helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 $helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 $helm repo update
+
+install chart
 $helm install prometheus prometheus-community/kube-prometheus-stack
 
 
-$kubectl get servicemonitor
-$kubectl get svc 
+$kubectl get servicemonitor -n prometheus
+$kubectl get svc -n prometheus
 #locate prometheus-grafana and prometheus-kube-prometheus-prometheus
-$kubectl edit svc prometheus-grafana
+$kubectl edit svc prometheus-grafana -n prometheus
 (change service type from ClusterIP to LoadBalancer)
 
-$kubectl edit svc prometheus-kube-prometheus-prometheus
+$kubectl edit svc prometheus-kube-prometheus-prometheus -n prometheus
 (change service type from ClusterIP to LoadBalancer)
 
-$kubectl get svc 
+$kubectl get svc -n prometheus
 Get the LoadBalancer and access grafana on port 80 
 Access prometheus on port 9090
 ---
@@ -155,7 +160,6 @@ Click ‘Import’
 
 ============
 You can also deploy nginx in that namespace.
-$kubectl create ns prometheus
 $kubectl get ns
 $kubectl run nginx --image=nginx --namespace=prometheus
 Also deploy etechapp this is the yaml --> https://github.com/etechDevops/etech-legacy-appv1
