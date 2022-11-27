@@ -76,6 +76,7 @@ This is where service discovery comes into play. Service discovery helps in prov
 
 Installation Method:
 Prerequisite:
+## Set up an EKS cluster: https://github.com/etechDevops/Terraform-EKS
 Install Helm  
 DEPLOY AN EKS CLUSTER USING TERRAFORM, link to github with eks code --> https://github.com/etechDevops/Terraform-EKS
 Run the below commands to configure prometheus and grafana monitoring
