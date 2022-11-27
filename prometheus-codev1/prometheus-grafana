@@ -76,7 +76,7 @@ This is where service discovery comes into play. Service discovery helps in prov
 
 Installation Method:
 Prerequisite:
-## Set up an EKS cluster: 
+## Follow this link to Set up an EKS cluster: 
 ``` 
 https://github.com/etechDevops/Terraform-EKS
 ```
